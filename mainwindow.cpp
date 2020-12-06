@@ -215,7 +215,11 @@ MainWindow::MainWindow(QWidget *parent)
     muros.push_back(muro53);
     muros.push_back(muro54);
     muros.push_back(muro55);
-
+    muros.push_back(Muro56);
+    muros.push_back(Muro57);
+    muros.push_back(Muro58);
+    muros.push_back(Muro59);
+    muros.push_back(Muro60);
 
     //Muros
     for (unsigned short int i=0;i<55 ;i++ ) {
@@ -235,11 +239,6 @@ MainWindow::MainWindow(QWidget *parent)
 
         }
     }
-    scene->addItem(Muro56);
-    scene->addItem(Muro57);
-    scene->addItem(Muro58);
-    scene->addItem(Muro59);
-    scene->addItem(Muro60);
 
     for (int I=0;I<muros.size() ;I++) {
         for (int i=0;i<monedas.size() ;i++) {
@@ -267,6 +266,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     scene->addItem(vida3);
     scene->addItem(Muro65);
+
+    tiempo = new Reloj;
+    tiempo->setPos(-90,365);
+    scene->addItem(tiempo);
 }
 
 
@@ -400,3 +403,5 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+

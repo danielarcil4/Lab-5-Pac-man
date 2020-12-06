@@ -23,6 +23,7 @@ Sprite::Sprite(QObject *parent) : QObject(parent)
 
     connect(timer,&QTimer::timeout,this,&Sprite::personaje);
 
+
 }
 
 QRectF Sprite::boundingRect() const

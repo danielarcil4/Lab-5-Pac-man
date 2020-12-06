@@ -7,6 +7,7 @@
 #include "monedas.h"
 #include "puntaje.h"
 #include "vidas.h"
+#include "reloj.h"
 
 #include <QGraphicsScene>
 #include <QMainWindow>
@@ -114,6 +115,9 @@ private:
 
     QGraphicsScene *scene;
 
+
+
+    Reloj *tiempo;
 
 };
 #endif // MAINWINDOW_H

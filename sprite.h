@@ -32,7 +32,6 @@ public:
 signals:
 public slots:
     void personaje();
-
 };
 
 #endif // SPRITE_H
