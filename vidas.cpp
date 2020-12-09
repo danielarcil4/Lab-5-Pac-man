@@ -1,6 +1,11 @@
 #include "vidas.h"
 #include <QFont>
 
+int Vidas::getVidas() const
+{
+    return vidas;
+}
+
 Vidas::Vidas(QGraphicsItem *parent):QGraphicsTextItem(parent)
 {
     vidas=3;

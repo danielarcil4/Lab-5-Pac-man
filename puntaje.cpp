@@ -1,6 +1,23 @@
 #include "puntaje.h"
 #include <QFont>
 
+void Puntaje::perderVida()
+{
+    setPlainText(QString("Perdiste "));
+    setDefaultTextColor(Qt::blue);
+    setFont(QFont("Bauhaus 93",20));
+}
+
+int Puntaje::getPuntaje() const
+{
+    return puntaje;
+}
+
+void Puntaje::setPuntaje(int value)
+{
+    puntaje = value;
+}
+
 Puntaje::Puntaje(QGraphicsItem *parent):QGraphicsTextItem(parent)
 {
     puntaje=0;

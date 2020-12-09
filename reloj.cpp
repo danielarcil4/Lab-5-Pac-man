@@ -1,6 +1,16 @@
 #include "reloj.h"
 #include <QFont>
 
+int Reloj::getReloj() const
+{
+    return reloj;
+}
+
+void Reloj::setReloj(int value)
+{
+    reloj = value;
+}
+
 Reloj::Reloj(QGraphicsItem *parent):QGraphicsTextItem(parent)
 {
     reloj=160;
@@ -12,6 +22,7 @@ Reloj::Reloj(QGraphicsItem *parent):QGraphicsTextItem(parent)
     connect(timer,&QTimer::timeout,this,&Reloj::Decrementar);
 
 }
+
 
 void Reloj::Decrementar()
 {

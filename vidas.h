@@ -12,6 +12,7 @@ class Vidas: public QGraphicsTextItem
 public:
     Vidas(QGraphicsItem * parent=0);
     void Decrementar();
+    int getVidas() const;
 };
 
 #endif // VIDAS_H

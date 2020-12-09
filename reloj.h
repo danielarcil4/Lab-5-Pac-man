@@ -8,12 +8,14 @@
 #include <QDebug>
 
 class Reloj: public QGraphicsTextItem
-
 {
     int reloj;
 public:
     Reloj(QGraphicsItem * parent=0);
     QTimer *timer;
+    int getReloj() const;
+    void setReloj(int value);
+
 signals:
 public slots:
     void Decrementar();

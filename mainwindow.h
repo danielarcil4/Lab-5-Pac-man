@@ -29,10 +29,16 @@ public:
     void keyPressEvent(QKeyEvent * evento);
     ~MainWindow();
 
+    int getNivel() const;
+    void setNivel(int value);
+
 private:
     Ui::MainWindow *ui;
     float X,Y,W,H;
+
     Sprite *jugador;
+
+    int Nivel=1;
 
     //lvl 1
     Muros *muro1;
@@ -114,10 +120,14 @@ private:
     QGraphicsEllipseItem *vida3 = new QGraphicsEllipseItem;
 
     QGraphicsScene *scene;
+    QTimer *nivel;
 
-
+    QList <QGraphicsItem*> muros;
+    QList<QGraphicsItem*> monedas;
 
     Reloj *tiempo;
-
+signals:
+public slots:
+    void ganar();
 };
 #endif // MAINWINDOW_H
