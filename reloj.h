@@ -15,6 +15,7 @@ public:
     QTimer *timer;
     int getReloj() const;
     void setReloj(int value);
+    void ganarLvl();
 
 signals:
 public slots:
