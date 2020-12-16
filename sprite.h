@@ -11,20 +11,13 @@
 class Sprite: public QObject,public QGraphicsItem
 {
     Q_OBJECT
-private:
-
-    int posx,posy;
-
+    int filas,columnas;
+    int ancho,alto;
 public:
-    Sprite(int x,int y);
     explicit Sprite(QObject *parent = nullptr);
-
 
     QTimer *timer;
     QPixmap *Pixmap;
-
-    float filas,columnas;
-    float ancho,alto;
 
     QRectF boundingRect() const;
     void paint(QPainter *painter,const QStyleOptionGraphicsItem *option,QWidget *widget = nullptr);

@@ -2,13 +2,6 @@
 #include "muros.h"
 #include "QDebug"
 
-Sprite::Sprite(int x, int y)
-{
-    posx=x;
-    posy=y;
-    setPos(posx,posy);
-}
-
 Sprite::Sprite(QObject *parent) : QObject(parent)
 {
     timer = new QTimer();

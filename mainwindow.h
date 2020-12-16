@@ -8,6 +8,7 @@
 #include "puntaje.h"
 #include "vidas.h"
 #include "reloj.h"
+#include "ghosts.h"
 
 #include <QGraphicsScene>
 #include <QMainWindow>
@@ -15,6 +16,7 @@
 #include <QDebug>
 #include <QGraphicsRectItem>
 #include <QGraphicsEllipseItem>
+#include <QMediaPlayer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -37,10 +39,10 @@ private:
     float X,Y,W,H;
 
     Sprite *jugador;
+    Ghosts *enemigo1;
 
     int Nivel=1;
 
-    //lvl 1
     Muros *muro1;
     Muros *muro2;
     Muros *muro3;
@@ -121,13 +123,16 @@ private:
 
     QGraphicsScene *scene;
     QTimer *nivel;
+    QTimer *perseguir_;
 
     QList <QGraphicsItem*> muros;
     QList<QGraphicsItem*> monedas;
+    QMediaPlayer *musica = new QMediaPlayer;
 
     Reloj *tiempo;
 signals:
 public slots:
     void ganar();
+    void perseguir();
 };
 #endif // MAINWINDOW_H

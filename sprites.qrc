@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>sprites/Pac-Man.png</file>
+        <file>sprites/unnamed.png</file>
+        <file>sprites/pacman-song.mp3</file>
     </qresource>
 </RCC>
