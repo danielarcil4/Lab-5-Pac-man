@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
     jugador->setPos(500,600);
 
     enemigo1 = new Ghosts();
-    enemigo1->setPos(365,384);
+    enemigo1->setPos(367,384);
 
     tiempo = new Reloj;
     tiempo->setReloj(170);
@@ -270,14 +270,17 @@ MainWindow::MainWindow(QWidget *parent)
     scene->addItem(tiempo);
     scene->addItem(enemigo1);
 
+    QMediaPlayer *musica = new QMediaPlayer;
+    musica->setMedia(QUrl("qrc:/sprites/pacman-song.mp3"));
+    musica->play();
+
     perseguir_ = new QTimer();
     nivel = new QTimer();
     nivel->start(1000);
     perseguir_->start(100);
     connect(nivel,SIGNAL(timeout()),this,SLOT(ganar()));
     connect(perseguir_,SIGNAL(timeout()),this,SLOT(perseguir()));
-    musica->setMedia(QUrl(":/sprites/pacman-song.mp3"));
-    musica->play();
+
 }
 
 
@@ -285,8 +288,11 @@ void MainWindow::keyPressEvent(QKeyEvent *evento)
 {
     if(getNivel()==1){
         QList<QGraphicsItem *> galletas = jugador->collidingItems();
+        QMediaPlayer *musica2 = new QMediaPlayer;
         for (unsigned short int i=0 ;i<galletas.size() ;i++ ) {
             if( jugador->collidesWithItem(galletas[i])){
+                musica2->setMedia(QUrl("qrc:/sprites/pacman-waka-waka.mp3"));
+                musica2->play();
                 scene->removeItem(galletas[i]);
                 puntos->incrementar();
             }
@@ -407,8 +413,11 @@ void MainWindow::keyPressEvent(QKeyEvent *evento)
     }
     else if(getNivel()==2 or getNivel()==3){
         QList<QGraphicsItem *> galletas = jugador->collidingItems();
+        QMediaPlayer *musica2 = new QMediaPlayer;
         for (unsigned short int i=0 ;i<galletas.size() ;i++ ) {
-            if( jugador->collidesWithItem(galletas[i])){
+            if( jugador->collidesWithItem(galletas[i])){              
+                musica2->setMedia(QUrl("qrc:/sprites/pacman-waka-waka.mp3"));
+                musica2->play();
                 scene->removeItem(galletas[i]);
                 puntos->incrementar();
             }
@@ -501,8 +510,12 @@ void MainWindow::setNivel(int value)
 void MainWindow::ganar()
 {
     //Pasar nivel
-    if(puntos->getPuntaje()>=puntos->getMaxPuntaje()){
+    if(puntos->getPuntaje()>=/*puntos->getMaxPuntaje()*/20){
         setNivel(getNivel()+1);
+        QMediaPlayer *musica = new QMediaPlayer;
+        musica->setMedia(QUrl("qrc:/sprites/pacman-song.mp3"));
+        musica->play();
+        puntos->setPuntaje(0);
         if(getNivel()!=4)
             for (int i=0;i<muros.size() ;i++ )
                 scene->removeItem(muros[i]);
@@ -810,7 +823,6 @@ void MainWindow::ganar()
                         monedas.push_back(new Monedas(i,I));
                         scene->addItem(monedas.back());
                     }
-
                 }
             }
 
@@ -867,15 +879,21 @@ void MainWindow::ganar()
     //Perder por tiempo
     else if(tiempo->getReloj()<=0 or enemigo1->collidesWithItem(jugador)){
         health->Decrementar();
+        QMediaPlayer *musica3 = new QMediaPlayer;
+        musica3->setMedia(QUrl("qrc:/sprites/pacman-dies.mp3"));
+        musica3->play();
         if(Nivel==1){
             jugador->setPos(500,600);
+            enemigo1->setPos(367,384);
+        }
+        else if(Nivel==2){
+            jugador->setPos(120,100);
             enemigo1->setPos(365,384);
         }
-        else if(Nivel==2)
-            jugador->setPos(120,100);
-        else if(Nivel==3)
+        else if(Nivel==3){
             jugador->setPos(200,450);
-
+            enemigo1->setPos(365,340);
+        }
         if(health->getVidas()==2){
             scene->removeItem(vida3);
             scene->removeItem(Muro65);
@@ -888,16 +906,11 @@ void MainWindow::ganar()
             setNivel(4);
             puntos->perderVida();
             disconnect(nivel,SIGNAL(timeout()),this,SLOT(ganar()));
+            disconnect(perseguir_,SIGNAL(timeout()),this,SLOT(perseguir()));
         }
-        monedas.clear();
-        for (int I=20;I<950;I+=50) {
-            for (int i=-70;i<850 ;i+=50) {
-                if(i!=700 and I !=380){
-                    monedas.push_back(new Monedas(i,I));
-                    scene->removeItem(monedas.back());
-                }
-
-            }
+        for (int I=0;I<monedas.length();I++) {
+            scene->removeItem(monedas.at(I));
+            delete monedas.at(I);
         }
         monedas.clear();
         for (int I=20;I<950;I+=50) {
@@ -1025,205 +1038,66 @@ void MainWindow::perseguir()
              if(enemigo1->collidesWithItem(muro49) or enemigo1->collidesWithItem(muro50) or enemigo1->collidesWithItem(muro51) or enemigo1->collidesWithItem(muro52) or enemigo1->collidesWithItem(muro53) or enemigo1->collidesWithItem(muro54) or enemigo1->collidesWithItem(muro55))
                 enemigo1->setPos(enemigo1->x(),enemigo1->y()+5);
         }
-
-        if(enemigo1->x()<jugador->x() and enemigo1->y()<jugador->y()){
+    }
+    if(Nivel==2 or Nivel==3){
+        if(enemigo1->x()<jugador->x()){
+            enemigo1->setPos(enemigo1->x()+5,enemigo1->y());
 
             if(enemigo1->collidesWithItem(muro1) or enemigo1->collidesWithItem(muro2) or enemigo1->collidesWithItem(muro3) or enemigo1->collidesWithItem(muro4) or enemigo1->collidesWithItem(muro5) or enemigo1->collidesWithItem(muro6) or enemigo1->collidesWithItem(muro7) or enemigo1->collidesWithItem(muro8))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()-5);
+                enemigo1->setPos(enemigo1->x()-5,enemigo1->y());
 
              if(enemigo1->collidesWithItem(muro9) or enemigo1->collidesWithItem(muro10) or enemigo1->collidesWithItem(muro11) or enemigo1->collidesWithItem(muro12) or enemigo1->collidesWithItem(muro13) or enemigo1->collidesWithItem(muro14) or enemigo1->collidesWithItem(muro15) or enemigo1->collidesWithItem(muro16))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()-5);
+                enemigo1->setPos(enemigo1->x()-5,enemigo1->y());
 
              if(enemigo1->collidesWithItem(muro17) or enemigo1->collidesWithItem(muro18) or enemigo1->collidesWithItem(muro19) or enemigo1->collidesWithItem(muro20) or enemigo1->collidesWithItem(muro21) or enemigo1->collidesWithItem(muro22) or enemigo1->collidesWithItem(muro23) or enemigo1->collidesWithItem(muro24))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()-5);
+                enemigo1->setPos(enemigo1->x()-5,enemigo1->y());
 
-             if(enemigo1->collidesWithItem(muro25) or enemigo1->collidesWithItem(muro26) or enemigo1->collidesWithItem(muro27) or enemigo1->collidesWithItem(muro28) or enemigo1->collidesWithItem(muro29) or enemigo1->collidesWithItem(muro30) or enemigo1->collidesWithItem(muro31) or enemigo1->collidesWithItem(muro32))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()-5);
+             if(enemigo1->collidesWithItem(muro25) or enemigo1->collidesWithItem(muro26) or enemigo1->collidesWithItem(muro27) or enemigo1->collidesWithItem(muro28) or enemigo1->collidesWithItem(muro29) or enemigo1->collidesWithItem(muro30) or enemigo1->collidesWithItem(muro31))
+                enemigo1->setPos(enemigo1->x()-5,enemigo1->y());
+       }
+        if(enemigo1->x()>jugador->x()){
+            enemigo1->setPos(enemigo1->x()-5,enemigo1->y());
 
-             if(enemigo1->collidesWithItem(muro33) or enemigo1->collidesWithItem(muro34) or enemigo1->collidesWithItem(muro35) or enemigo1->collidesWithItem(muro36) or enemigo1->collidesWithItem(muro37) or enemigo1->collidesWithItem(muro38) or enemigo1->collidesWithItem(muro39) or enemigo1->collidesWithItem(muro40))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()-5);
+            if(enemigo1->collidesWithItem(muro1) or enemigo1->collidesWithItem(muro2) or enemigo1->collidesWithItem(muro3) or enemigo1->collidesWithItem(muro4) or enemigo1->collidesWithItem(muro5) or enemigo1->collidesWithItem(muro6) or enemigo1->collidesWithItem(muro7) or enemigo1->collidesWithItem(muro8))
+                enemigo1->setPos(enemigo1->x()+5,enemigo1->y());
 
-             if(enemigo1->collidesWithItem(muro41) or enemigo1->collidesWithItem(muro42) or enemigo1->collidesWithItem(muro43) or enemigo1->collidesWithItem(muro45) or enemigo1->collidesWithItem(muro46) or enemigo1->collidesWithItem(muro47) or enemigo1->collidesWithItem(muro48))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()-5);
+             if(enemigo1->collidesWithItem(muro9) or enemigo1->collidesWithItem(muro10) or enemigo1->collidesWithItem(muro11) or enemigo1->collidesWithItem(muro12) or enemigo1->collidesWithItem(muro13) or enemigo1->collidesWithItem(muro14) or enemigo1->collidesWithItem(muro15) or enemigo1->collidesWithItem(muro16))
+                enemigo1->setPos(enemigo1->x()+5,enemigo1->y());
 
-             if(enemigo1->collidesWithItem(muro49) or enemigo1->collidesWithItem(muro50) or enemigo1->collidesWithItem(muro51) or enemigo1->collidesWithItem(muro52) or enemigo1->collidesWithItem(muro53) or enemigo1->collidesWithItem(muro54) or enemigo1->collidesWithItem(muro55))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()-5);
+             if(enemigo1->collidesWithItem(muro17) or enemigo1->collidesWithItem(muro18) or enemigo1->collidesWithItem(muro19) or enemigo1->collidesWithItem(muro20) or enemigo1->collidesWithItem(muro21) or enemigo1->collidesWithItem(muro22) or enemigo1->collidesWithItem(muro23) or enemigo1->collidesWithItem(muro24))
+                enemigo1->setPos(enemigo1->x()+5,enemigo1->y());
 
+             if(enemigo1->collidesWithItem(muro25) or enemigo1->collidesWithItem(muro26) or enemigo1->collidesWithItem(muro27) or enemigo1->collidesWithItem(muro28) or enemigo1->collidesWithItem(muro29) or enemigo1->collidesWithItem(muro30) or enemigo1->collidesWithItem(muro31))
+                enemigo1->setPos(enemigo1->x()+5,enemigo1->y());
         }
-        if(enemigo1->x()<jugador->x() and enemigo1->y()>jugador->y()){
-
+        if(enemigo1->y()<jugador->y()){
+            enemigo1->setPos(enemigo1->x(),enemigo1->y()+5);
             if(enemigo1->collidesWithItem(muro1) or enemigo1->collidesWithItem(muro2) or enemigo1->collidesWithItem(muro3) or enemigo1->collidesWithItem(muro4) or enemigo1->collidesWithItem(muro5) or enemigo1->collidesWithItem(muro6) or enemigo1->collidesWithItem(muro7) or enemigo1->collidesWithItem(muro8))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()+5);
+                enemigo1->setPos(enemigo1->x(),enemigo1->y()-5);
 
              if(enemigo1->collidesWithItem(muro9) or enemigo1->collidesWithItem(muro10) or enemigo1->collidesWithItem(muro11) or enemigo1->collidesWithItem(muro12) or enemigo1->collidesWithItem(muro13) or enemigo1->collidesWithItem(muro14) or enemigo1->collidesWithItem(muro15) or enemigo1->collidesWithItem(muro16))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()+5);
+                enemigo1->setPos(enemigo1->x(),enemigo1->y()-5);
 
              if(enemigo1->collidesWithItem(muro17) or enemigo1->collidesWithItem(muro18) or enemigo1->collidesWithItem(muro19) or enemigo1->collidesWithItem(muro20) or enemigo1->collidesWithItem(muro21) or enemigo1->collidesWithItem(muro22) or enemigo1->collidesWithItem(muro23) or enemigo1->collidesWithItem(muro24))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()+5);
+                enemigo1->setPos(enemigo1->x(),enemigo1->y()-5);
 
-             if(enemigo1->collidesWithItem(muro25) or enemigo1->collidesWithItem(muro26) or enemigo1->collidesWithItem(muro27) or enemigo1->collidesWithItem(muro28) or enemigo1->collidesWithItem(muro29) or enemigo1->collidesWithItem(muro30) or enemigo1->collidesWithItem(muro31) or enemigo1->collidesWithItem(muro32))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()+5);
-
-             if(enemigo1->collidesWithItem(muro33) or enemigo1->collidesWithItem(muro34) or enemigo1->collidesWithItem(muro35) or enemigo1->collidesWithItem(muro36) or enemigo1->collidesWithItem(muro37) or enemigo1->collidesWithItem(muro38) or enemigo1->collidesWithItem(muro39) or enemigo1->collidesWithItem(muro40))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()+5);
-
-             if(enemigo1->collidesWithItem(muro41) or enemigo1->collidesWithItem(muro42) or enemigo1->collidesWithItem(muro43) or enemigo1->collidesWithItem(muro45) or enemigo1->collidesWithItem(muro46) or enemigo1->collidesWithItem(muro47) or enemigo1->collidesWithItem(muro48))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()+5);
-
-             if(enemigo1->collidesWithItem(muro49) or enemigo1->collidesWithItem(muro50) or enemigo1->collidesWithItem(muro51) or enemigo1->collidesWithItem(muro52) or enemigo1->collidesWithItem(muro53) or enemigo1->collidesWithItem(muro54) or enemigo1->collidesWithItem(muro55))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()+5);
-
+             if(enemigo1->collidesWithItem(muro25) or enemigo1->collidesWithItem(muro26) or enemigo1->collidesWithItem(muro27) or enemigo1->collidesWithItem(muro28) or enemigo1->collidesWithItem(muro29) or enemigo1->collidesWithItem(muro30) or enemigo1->collidesWithItem(muro31))
+                enemigo1->setPos(enemigo1->x(),enemigo1->y()-5);
         }
-
-        if(enemigo1->x()>jugador->x() and enemigo1->y()>jugador->y()){
-
-            if(enemigo1->collidesWithItem(muro1) or enemigo1->collidesWithItem(muro2) or enemigo1->collidesWithItem(muro3) or enemigo1->collidesWithItem(muro4) or enemigo1->collidesWithItem(muro5) or enemigo1->collidesWithItem(muro6) or enemigo1->collidesWithItem(muro7) or enemigo1->collidesWithItem(muro8))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()-5);
-
-             if(enemigo1->collidesWithItem(muro9) or enemigo1->collidesWithItem(muro10) or enemigo1->collidesWithItem(muro11) or enemigo1->collidesWithItem(muro12) or enemigo1->collidesWithItem(muro13) or enemigo1->collidesWithItem(muro14) or enemigo1->collidesWithItem(muro15) or enemigo1->collidesWithItem(muro16))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()-5);
-
-             if(enemigo1->collidesWithItem(muro17) or enemigo1->collidesWithItem(muro18) or enemigo1->collidesWithItem(muro19) or enemigo1->collidesWithItem(muro20) or enemigo1->collidesWithItem(muro21) or enemigo1->collidesWithItem(muro22) or enemigo1->collidesWithItem(muro23) or enemigo1->collidesWithItem(muro24))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()-5);
-
-             if(enemigo1->collidesWithItem(muro25) or enemigo1->collidesWithItem(muro26) or enemigo1->collidesWithItem(muro27) or enemigo1->collidesWithItem(muro28) or enemigo1->collidesWithItem(muro29) or enemigo1->collidesWithItem(muro30) or enemigo1->collidesWithItem(muro31) or enemigo1->collidesWithItem(muro32))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()-5);
-
-             if(enemigo1->collidesWithItem(muro33) or enemigo1->collidesWithItem(muro34) or enemigo1->collidesWithItem(muro35) or enemigo1->collidesWithItem(muro36) or enemigo1->collidesWithItem(muro37) or enemigo1->collidesWithItem(muro38) or enemigo1->collidesWithItem(muro39) or enemigo1->collidesWithItem(muro40))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()-5);
-
-             if(enemigo1->collidesWithItem(muro41) or enemigo1->collidesWithItem(muro42) or enemigo1->collidesWithItem(muro43) or enemigo1->collidesWithItem(muro45) or enemigo1->collidesWithItem(muro46) or enemigo1->collidesWithItem(muro47) or enemigo1->collidesWithItem(muro48))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()-5);
-
-             if(enemigo1->collidesWithItem(muro49) or enemigo1->collidesWithItem(muro50) or enemigo1->collidesWithItem(muro51) or enemigo1->collidesWithItem(muro52) or enemigo1->collidesWithItem(muro53) or enemigo1->collidesWithItem(muro54) or enemigo1->collidesWithItem(muro55))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()-5);
-
-        }
-
-        if(enemigo1->x()>jugador->x() and enemigo1->y()<jugador->y()){
+        if(enemigo1->y()>jugador->y()){
+            enemigo1->setPos(enemigo1->x(),enemigo1->y()-5);
 
             if(enemigo1->collidesWithItem(muro1) or enemigo1->collidesWithItem(muro2) or enemigo1->collidesWithItem(muro3) or enemigo1->collidesWithItem(muro4) or enemigo1->collidesWithItem(muro5) or enemigo1->collidesWithItem(muro6) or enemigo1->collidesWithItem(muro7) or enemigo1->collidesWithItem(muro8))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()+5);
+                enemigo1->setPos(enemigo1->x(),enemigo1->y()+5);
 
              if(enemigo1->collidesWithItem(muro9) or enemigo1->collidesWithItem(muro10) or enemigo1->collidesWithItem(muro11) or enemigo1->collidesWithItem(muro12) or enemigo1->collidesWithItem(muro13) or enemigo1->collidesWithItem(muro14) or enemigo1->collidesWithItem(muro15) or enemigo1->collidesWithItem(muro16))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()+5);
+                enemigo1->setPos(enemigo1->x(),enemigo1->y()+5);
 
              if(enemigo1->collidesWithItem(muro17) or enemigo1->collidesWithItem(muro18) or enemigo1->collidesWithItem(muro19) or enemigo1->collidesWithItem(muro20) or enemigo1->collidesWithItem(muro21) or enemigo1->collidesWithItem(muro22) or enemigo1->collidesWithItem(muro23) or enemigo1->collidesWithItem(muro24))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()+5);
+                enemigo1->setPos(enemigo1->x(),enemigo1->y()+5);
 
-             if(enemigo1->collidesWithItem(muro25) or enemigo1->collidesWithItem(muro26) or enemigo1->collidesWithItem(muro27) or enemigo1->collidesWithItem(muro28) or enemigo1->collidesWithItem(muro29) or enemigo1->collidesWithItem(muro30) or enemigo1->collidesWithItem(muro31) or enemigo1->collidesWithItem(muro32))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()+5);
-
-             if(enemigo1->collidesWithItem(muro33) or enemigo1->collidesWithItem(muro34) or enemigo1->collidesWithItem(muro35) or enemigo1->collidesWithItem(muro36) or enemigo1->collidesWithItem(muro37) or enemigo1->collidesWithItem(muro38) or enemigo1->collidesWithItem(muro39) or enemigo1->collidesWithItem(muro40))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()+5);
-
-             if(enemigo1->collidesWithItem(muro41) or enemigo1->collidesWithItem(muro42) or enemigo1->collidesWithItem(muro43) or enemigo1->collidesWithItem(muro45) or enemigo1->collidesWithItem(muro46) or enemigo1->collidesWithItem(muro47) or enemigo1->collidesWithItem(muro48))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()+5);
-
-             if(enemigo1->collidesWithItem(muro49) or enemigo1->collidesWithItem(muro50) or enemigo1->collidesWithItem(muro51) or enemigo1->collidesWithItem(muro52) or enemigo1->collidesWithItem(muro53) or enemigo1->collidesWithItem(muro54) or enemigo1->collidesWithItem(muro55))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()+5);
-
-        }
-
-        if(enemigo1->y()<jugador->y() and enemigo1->x()<jugador->x()){
-
-            if(enemigo1->collidesWithItem(muro1) or enemigo1->collidesWithItem(muro2) or enemigo1->collidesWithItem(muro3) or enemigo1->collidesWithItem(muro4) or enemigo1->collidesWithItem(muro5) or enemigo1->collidesWithItem(muro6) or enemigo1->collidesWithItem(muro7) or enemigo1->collidesWithItem(muro8))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()-5);
-
-             if(enemigo1->collidesWithItem(muro9) or enemigo1->collidesWithItem(muro10) or enemigo1->collidesWithItem(muro11) or enemigo1->collidesWithItem(muro12) or enemigo1->collidesWithItem(muro13) or enemigo1->collidesWithItem(muro14) or enemigo1->collidesWithItem(muro15) or enemigo1->collidesWithItem(muro16))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()-5);
-
-             if(enemigo1->collidesWithItem(muro17) or enemigo1->collidesWithItem(muro18) or enemigo1->collidesWithItem(muro19) or enemigo1->collidesWithItem(muro20) or enemigo1->collidesWithItem(muro21) or enemigo1->collidesWithItem(muro22) or enemigo1->collidesWithItem(muro23) or enemigo1->collidesWithItem(muro24))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()-5);
-
-             if(enemigo1->collidesWithItem(muro25) or enemigo1->collidesWithItem(muro26) or enemigo1->collidesWithItem(muro27) or enemigo1->collidesWithItem(muro28) or enemigo1->collidesWithItem(muro29) or enemigo1->collidesWithItem(muro30) or enemigo1->collidesWithItem(muro31) or enemigo1->collidesWithItem(muro32))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()-5);
-
-             if(enemigo1->collidesWithItem(muro33) or enemigo1->collidesWithItem(muro34) or enemigo1->collidesWithItem(muro35) or enemigo1->collidesWithItem(muro36) or enemigo1->collidesWithItem(muro37) or enemigo1->collidesWithItem(muro38) or enemigo1->collidesWithItem(muro39) or enemigo1->collidesWithItem(muro40))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()-5);
-
-             if(enemigo1->collidesWithItem(muro41) or enemigo1->collidesWithItem(muro42) or enemigo1->collidesWithItem(muro43) or enemigo1->collidesWithItem(muro45) or enemigo1->collidesWithItem(muro46) or enemigo1->collidesWithItem(muro47) or enemigo1->collidesWithItem(muro48))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()-5);
-
-             if(enemigo1->collidesWithItem(muro49) or enemigo1->collidesWithItem(muro50) or enemigo1->collidesWithItem(muro51) or enemigo1->collidesWithItem(muro52) or enemigo1->collidesWithItem(muro53) or enemigo1->collidesWithItem(muro54) or enemigo1->collidesWithItem(muro55))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()-5);
-        }
-
-        if(enemigo1->y()<jugador->y() and enemigo1->x()>jugador->x()){
-
-            if(enemigo1->collidesWithItem(muro1) or enemigo1->collidesWithItem(muro2) or enemigo1->collidesWithItem(muro3) or enemigo1->collidesWithItem(muro4) or enemigo1->collidesWithItem(muro5) or enemigo1->collidesWithItem(muro6) or enemigo1->collidesWithItem(muro7) or enemigo1->collidesWithItem(muro8))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()-5);
-
-             if(enemigo1->collidesWithItem(muro9) or enemigo1->collidesWithItem(muro10) or enemigo1->collidesWithItem(muro11) or enemigo1->collidesWithItem(muro12) or enemigo1->collidesWithItem(muro13) or enemigo1->collidesWithItem(muro14) or enemigo1->collidesWithItem(muro15) or enemigo1->collidesWithItem(muro16))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()-5);
-
-             if(enemigo1->collidesWithItem(muro17) or enemigo1->collidesWithItem(muro18) or enemigo1->collidesWithItem(muro19) or enemigo1->collidesWithItem(muro20) or enemigo1->collidesWithItem(muro21) or enemigo1->collidesWithItem(muro22) or enemigo1->collidesWithItem(muro23) or enemigo1->collidesWithItem(muro24))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()-5);
-
-             if(enemigo1->collidesWithItem(muro25) or enemigo1->collidesWithItem(muro26) or enemigo1->collidesWithItem(muro27) or enemigo1->collidesWithItem(muro28) or enemigo1->collidesWithItem(muro29) or enemigo1->collidesWithItem(muro30) or enemigo1->collidesWithItem(muro31) or enemigo1->collidesWithItem(muro32))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()-5);
-
-             if(enemigo1->collidesWithItem(muro33) or enemigo1->collidesWithItem(muro34) or enemigo1->collidesWithItem(muro35) or enemigo1->collidesWithItem(muro36) or enemigo1->collidesWithItem(muro37) or enemigo1->collidesWithItem(muro38) or enemigo1->collidesWithItem(muro39) or enemigo1->collidesWithItem(muro40))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()-5);
-
-             if(enemigo1->collidesWithItem(muro41) or enemigo1->collidesWithItem(muro42) or enemigo1->collidesWithItem(muro43) or enemigo1->collidesWithItem(muro45) or enemigo1->collidesWithItem(muro46) or enemigo1->collidesWithItem(muro47) or enemigo1->collidesWithItem(muro48))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()-5);
-
-             if(enemigo1->collidesWithItem(muro49) or enemigo1->collidesWithItem(muro50) or enemigo1->collidesWithItem(muro51) or enemigo1->collidesWithItem(muro52) or enemigo1->collidesWithItem(muro53) or enemigo1->collidesWithItem(muro54) or enemigo1->collidesWithItem(muro55))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()-5);
-
-
-        }
-
-        if(enemigo1->y()>jugador->y() and enemigo1->x()<jugador->x() ){
-
-            if(enemigo1->collidesWithItem(muro1) or enemigo1->collidesWithItem(muro2) or enemigo1->collidesWithItem(muro3) or enemigo1->collidesWithItem(muro4) or enemigo1->collidesWithItem(muro5) or enemigo1->collidesWithItem(muro6) or enemigo1->collidesWithItem(muro7) or enemigo1->collidesWithItem(muro8))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()+5);
-
-             if(enemigo1->collidesWithItem(muro9) or enemigo1->collidesWithItem(muro10) or enemigo1->collidesWithItem(muro11) or enemigo1->collidesWithItem(muro12) or enemigo1->collidesWithItem(muro13) or enemigo1->collidesWithItem(muro14) or enemigo1->collidesWithItem(muro15) or enemigo1->collidesWithItem(muro16))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()+5);
-
-             if(enemigo1->collidesWithItem(muro17) or enemigo1->collidesWithItem(muro18) or enemigo1->collidesWithItem(muro19) or enemigo1->collidesWithItem(muro20) or enemigo1->collidesWithItem(muro21) or enemigo1->collidesWithItem(muro22) or enemigo1->collidesWithItem(muro23) or enemigo1->collidesWithItem(muro24))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()+5);
-
-             if(enemigo1->collidesWithItem(muro25) or enemigo1->collidesWithItem(muro26) or enemigo1->collidesWithItem(muro27) or enemigo1->collidesWithItem(muro28) or enemigo1->collidesWithItem(muro29) or enemigo1->collidesWithItem(muro30) or enemigo1->collidesWithItem(muro31) or enemigo1->collidesWithItem(muro32))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()+5);
-
-             if(enemigo1->collidesWithItem(muro33) or enemigo1->collidesWithItem(muro34) or enemigo1->collidesWithItem(muro35) or enemigo1->collidesWithItem(muro36) or enemigo1->collidesWithItem(muro37) or enemigo1->collidesWithItem(muro38) or enemigo1->collidesWithItem(muro39) or enemigo1->collidesWithItem(muro40))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()+5);
-
-             if(enemigo1->collidesWithItem(muro41) or enemigo1->collidesWithItem(muro42) or enemigo1->collidesWithItem(muro43) or enemigo1->collidesWithItem(muro45) or enemigo1->collidesWithItem(muro46) or enemigo1->collidesWithItem(muro47) or enemigo1->collidesWithItem(muro48))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()+5);
-
-             if(enemigo1->collidesWithItem(muro49) or enemigo1->collidesWithItem(muro50) or enemigo1->collidesWithItem(muro51) or enemigo1->collidesWithItem(muro52) or enemigo1->collidesWithItem(muro53) or enemigo1->collidesWithItem(muro54) or enemigo1->collidesWithItem(muro55))
-                enemigo1->setPos(enemigo1->x()+5,enemigo1->y()+5);
-
-        }
-
-        if(enemigo1->y()>jugador->y() and enemigo1->x()>jugador->x() ){
-
-            if(enemigo1->collidesWithItem(muro1) or enemigo1->collidesWithItem(muro2) or enemigo1->collidesWithItem(muro3) or enemigo1->collidesWithItem(muro4) or enemigo1->collidesWithItem(muro5) or enemigo1->collidesWithItem(muro6) or enemigo1->collidesWithItem(muro7) or enemigo1->collidesWithItem(muro8))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()+5);
-
-             if(enemigo1->collidesWithItem(muro9) or enemigo1->collidesWithItem(muro10) or enemigo1->collidesWithItem(muro11) or enemigo1->collidesWithItem(muro12) or enemigo1->collidesWithItem(muro13) or enemigo1->collidesWithItem(muro14) or enemigo1->collidesWithItem(muro15) or enemigo1->collidesWithItem(muro16))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()+5);
-
-             if(enemigo1->collidesWithItem(muro17) or enemigo1->collidesWithItem(muro18) or enemigo1->collidesWithItem(muro19) or enemigo1->collidesWithItem(muro20) or enemigo1->collidesWithItem(muro21) or enemigo1->collidesWithItem(muro22) or enemigo1->collidesWithItem(muro23) or enemigo1->collidesWithItem(muro24))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()+5);
-
-             if(enemigo1->collidesWithItem(muro25) or enemigo1->collidesWithItem(muro26) or enemigo1->collidesWithItem(muro27) or enemigo1->collidesWithItem(muro28) or enemigo1->collidesWithItem(muro29) or enemigo1->collidesWithItem(muro30) or enemigo1->collidesWithItem(muro31) or enemigo1->collidesWithItem(muro32))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()+5);
-
-             if(enemigo1->collidesWithItem(muro33) or enemigo1->collidesWithItem(muro34) or enemigo1->collidesWithItem(muro35) or enemigo1->collidesWithItem(muro36) or enemigo1->collidesWithItem(muro37) or enemigo1->collidesWithItem(muro38) or enemigo1->collidesWithItem(muro39) or enemigo1->collidesWithItem(muro40))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()+5);
-
-             if(enemigo1->collidesWithItem(muro41) or enemigo1->collidesWithItem(muro42) or enemigo1->collidesWithItem(muro43) or enemigo1->collidesWithItem(muro45) or enemigo1->collidesWithItem(muro46) or enemigo1->collidesWithItem(muro47) or enemigo1->collidesWithItem(muro48))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()+5);
-
-             if(enemigo1->collidesWithItem(muro49) or enemigo1->collidesWithItem(muro50) or enemigo1->collidesWithItem(muro51) or enemigo1->collidesWithItem(muro52) or enemigo1->collidesWithItem(muro53) or enemigo1->collidesWithItem(muro54) or enemigo1->collidesWithItem(muro55))
-                enemigo1->setPos(enemigo1->x()-5,enemigo1->y()+5);
-
-
+             if(enemigo1->collidesWithItem(muro25) or enemigo1->collidesWithItem(muro26) or enemigo1->collidesWithItem(muro27) or enemigo1->collidesWithItem(muro28) or enemigo1->collidesWithItem(muro29) or enemigo1->collidesWithItem(muro30) or enemigo1->collidesWithItem(muro31))
+                enemigo1->setPos(enemigo1->x(),enemigo1->y()+5);
         }
     }
 }

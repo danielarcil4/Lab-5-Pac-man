@@ -13,17 +13,12 @@ class Ghosts: public QObject,public QGraphicsItem
     float filas,columnas;
     float ancho,alto;
 public:
-    explicit Ghosts(QObject *parent = nullptr);
-
-    QTimer *timer;
+    Ghosts(QObject *parent = nullptr);
     QPixmap *Pixmap;
 
     QRectF boundingRect() const;
     void paint(QPainter *painter,const QStyleOptionGraphicsItem *option,QWidget *widget = nullptr);
 
-signals:
-public slots:
-    void personaje();
 };
 
 #endif // GHOSTS_H

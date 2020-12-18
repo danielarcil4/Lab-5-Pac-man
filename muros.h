@@ -11,7 +11,6 @@ public:
     Muros(int ancho_,int alto_,int x,int y);
 
     QRectF boundingRect() const;
-    //agrega el color y pinta en la pantalla
     void paint(QPainter *painter,const QStyleOptionGraphicsItem *option,QWidget *widget = nullptr);
 };
 

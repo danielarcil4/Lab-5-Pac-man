@@ -13,7 +13,6 @@
 #include <QGraphicsScene>
 #include <QMainWindow>
 #include <QDesktopWidget>
-#include <QDebug>
 #include <QGraphicsRectItem>
 #include <QGraphicsEllipseItem>
 #include <QMediaPlayer>
@@ -36,7 +35,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    float X,Y,W,H;
+    //float X,Y,W,H;
 
     Sprite *jugador;
     Ghosts *enemigo1;
@@ -111,6 +110,7 @@ private:
     QGraphicsRectItem *Muro60 = new QGraphicsRectItem;
     QGraphicsRectItem *Muro61 = new QGraphicsRectItem;
     QGraphicsRectItem *Muro62 = new QGraphicsRectItem;
+
     //vidas
     QGraphicsRectItem *Muro63 = new QGraphicsRectItem;
     QGraphicsEllipseItem *vida1 = new QGraphicsEllipseItem;
@@ -127,7 +127,7 @@ private:
 
     QList <QGraphicsItem*> muros;
     QList<QGraphicsItem*> monedas;
-    QMediaPlayer *musica = new QMediaPlayer;
+
 
     Reloj *tiempo;
 signals:

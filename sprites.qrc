@@ -3,5 +3,7 @@
         <file>sprites/Pac-Man.png</file>
         <file>sprites/unnamed.png</file>
         <file>sprites/pacman-song.mp3</file>
+        <file>sprites/pacman-dies.mp3</file>
+        <file>sprites/pacman-waka-waka.mp3</file>
     </qresource>
 </RCC>
